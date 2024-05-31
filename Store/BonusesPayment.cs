@@ -13,13 +13,16 @@ namespace Store
         {
             this.account = account;
         }
-        public void ProcessPayment(double amount)
+        public bool ProcessPayment(int amount)
         {
             if (account.GetBalance() >= amount)
             {
+                account.DeductFromBalance(amount);
+                return true;
             }
             else
             {
+                return false;
             }
         }
     }

@@ -14,25 +14,38 @@ namespace Store.view
     public partial class ShoppingCart : Form, IView
     {
         private Presenter presenter;
-
+        DebitCard card = new DebitCard();
+        BonusAccount account = new BonusAccount();
         public ShoppingCart()
         {
             presenter = new Presenter(this);
             InitializeComponent();
         }
-        EnterBonuses EnterBonuses = new EnterBonuses();
+        public void ShowMessage(string message)
+        {
+            MessageBox.Show(message);
+        }
+
         private void ShoppingCart_Load(object sender, EventArgs e)
         {
             var vinylrecords = presenter.GetCart();
-            foreach (var pair in vinylrecords)
+            foreach (var record in vinylrecords)
             {
-                listBoxCart.Items.Add(pair.Value);
+                listBoxCart.Items.Add(record);
             }
+            labelBonusesAmount.Text = account.GetBalance().ToString();
+            labelMoneyAmount.Text = card.GetBalance().ToString();
+
         }
 
         private void btnPayBonuses_Click(object sender, EventArgs e)
         {
-            EnterBonuses.Show();
+        }
+
+        private void btnPayCard_Click(object sender, EventArgs e)
+        {
+            CardPayment cardPayment = new CardPayment(card);
+
         }
     }
 }

@@ -12,16 +12,21 @@ namespace Store.presenter
     {
         private IView view;
         private Database db;
+        DebitCard card = new DebitCard();
+        BonusAccount account = new BonusAccount();
         public Presenter(IView view)
         {
             this.view = view;
             db = new Database(this);
+            CardPayment cardPayment = new CardPayment(card);
+            BonusesPayment bonusesPayment = new BonusesPayment(account);
+
         }
         public int GetPriceOfVinyl(VinylRecord vinylrecord)
         {
             return vinylrecord.GetPrice();
         }
-        public Dictionary<string, VinylRecord> GetVinylRecords()
+        public List<VinylRecord> GetVinylRecords()
         {
             return db.GetRecords();
         }
@@ -33,13 +38,63 @@ namespace Store.presenter
         {
             return vinylRecord.GetImage();
         }
-        public Dictionary<string, VinylRecord> GetCart()
+        public List<VinylRecord> GetCart()
         {
-            return db.GetCart(); 
+            return Cart.Instance.GetCartItems(); 
         }
-        public Dictionary<string, VinylRecord> AddToCart(VinylRecord vinylRecord)
+        public void AddToCart(VinylRecord vinylRecord, int amount)
         {
-            return db.AddToCart(vinylRecord);
+            Cart.Instance.AddToCart(vinylRecord, amount);
+        }
+        public void DeleteFromCart(VinylRecord vinylRecord)
+        {
+            Cart.Instance.DeleteFromCart(vinylRecord);
+        }
+        public int CalculateTotalCart()
+        {
+            return Cart.Instance.CalculateTotalPrice();
+        }
+        public int GetTotalCart()
+        {
+            return Cart.Instance.GetTotalCart();
+        }
+
+        public void PayingCard(CardPayment cardPayment, int amount)
+        {
+            //int totalPrice = GetTotalCart();
+            if (cardPayment.ProcessPayment(amount) == true)
+            {
+                view.ShowMessage("Чек оплачен.");
+            }
+            else
+            {
+                view.ShowMessage("Недостаточно средств. \nУдалите товары из корзины или воспользуйтесь бонусами.");
+            }
+        }
+        public void PayingBonuses(BonusesPayment bonusesPayment, int amount)
+        {
+            if (bonusesPayment.ProcessPayment(amount) == true)
+            {
+                view.ShowMessage("Бонусы списаны.");
+                int updatedPrice = Cart.Instance.RecalculateCart(amount);
+                Cart.Instance.SetCartTotal(updatedPrice);
+            }
+            else
+            {
+                view.ShowMessage("Введите верное количество бонусов");
+            }
+        }
+        public int GetBalanceFromCard(DebitCard card)
+        {
+            return card.GetBalance();
+        }
+        public int GetBalanceFromAccount(BonusAccount account)
+        {
+            return account.GetBalance();
+        }
+        public int RecalculateCartAfterPayingBonuses(int amount)
+        {
+            return Cart.Instance.RecalculateCart(amount);
         }
     }
 }

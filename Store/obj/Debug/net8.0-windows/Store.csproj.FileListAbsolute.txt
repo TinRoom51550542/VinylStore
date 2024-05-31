@@ -15,4 +15,3 @@ C:\Users\Евгения\source\repos\Store\Store\obj\Debug\net8.0-windows\refint
 C:\Users\Евгения\source\repos\Store\Store\obj\Debug\net8.0-windows\Store.pdb
 C:\Users\Евгения\source\repos\Store\Store\obj\Debug\net8.0-windows\Store.genruntimeconfig.cache
 C:\Users\Евгения\source\repos\Store\Store\obj\Debug\net8.0-windows\ref\Store.dll
-C:\Users\Евгения\source\repos\Store\Store\obj\Debug\net8.0-windows\Store.view.EnterBonuses.resources

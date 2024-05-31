@@ -13,13 +13,16 @@ namespace Store
         {
             this.card = card;
         }
-        public void ProcessPayment(double amount)
+        public bool ProcessPayment(int total)
         {
-            if (card.GetBalance() >= amount)
+            if (card.GetBalance() >= total)
             {
+                card.DeductFromBalance(total);
+                return true;
             }
             else
             {
+                return false;
             }
         }
     }

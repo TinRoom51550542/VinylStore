@@ -8,5 +8,6 @@ namespace Store.view
 {
     public interface IView
     {
+        void ShowMessage(string message);
     }
 }

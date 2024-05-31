@@ -4,18 +4,26 @@ using Store.presenter;
 using System.Collections.Generic;
 using System.Web;
 using System;
+using System.Security.Principal;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Store
 {
     public partial class Form1 : Form, IView
     {
         private Presenter presenter;
+        DebitCard card = new DebitCard();
+        BonusAccount account = new BonusAccount();
         public Form1()
         {
             presenter = new Presenter(this);
             InitializeComponent();
         }
         ShoppingCart shoppingCart;
+        public void ShowMessage(string message)
+        {
+            MessageBox.Show(message);
+        }
 
         private void btnOpenCart_Click(object sender, EventArgs e)
         {
@@ -33,7 +41,7 @@ namespace Store
                 {
                     listBoxProducts.SetSelected(i, true);
                     lastFoundIndex = i;
-                    break;//прерываем цикл
+                    break;
                 }
             }
             if (lastFoundIndex > -1 && i == listBoxProducts.Items.Count)
@@ -54,10 +62,12 @@ namespace Store
         private void Form1_Load(object sender, EventArgs e)
         {
             var vinylrecords = presenter.GetVinylRecords();
-            foreach (var pair in vinylrecords)
+            foreach (var record in vinylrecords)
             {
-                listBoxProducts.Items.Add(pair.Value);
+                listBoxProducts.Items.Add(record);
             }
+            labelBonusesAmount.Text = account.GetBalance().ToString();
+            labelMoneyAmount.Text = card.GetBalance().ToString();
         }
         private void listBoxProducts_Click(object sender, EventArgs e)
         {
@@ -75,9 +85,73 @@ namespace Store
         {
             if (listBoxProducts.SelectedItem != null)
             {
-                VinylRecord selectedVinylRecord = (VinylRecord)listBoxProducts.SelectedItem;
-                presenter.AddToCart(selectedVinylRecord);
+                string? text = textBoxAmount.Text;
+                int amount;
+                if (int.TryParse(text, out amount))
+                {
+                    VinylRecord selectedVinylRecord = (VinylRecord)listBoxProducts.SelectedItem;
+                    presenter.AddToCart(selectedVinylRecord, amount);
+                    MessageBox.Show("Товар успешно добавлен!");
+                    listBoxShoppingCart.Items.Clear();
+                    var cart = presenter.GetCart();
+                    foreach (var record in cart)
+                    {
+                        listBoxShoppingCart.Items.Add(record);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Введите количество товара.");
+                }
             }
+            labelTotal.Text = presenter.GetTotalCart().ToString() + " ₽";
+        }
+
+        private void btnDeleteFromCart_Click(object sender, EventArgs e)
+        {
+            if (listBoxShoppingCart.SelectedItem != null)
+            {
+                VinylRecord selectedVinylRecord = (VinylRecord)listBoxShoppingCart.SelectedItem;
+                presenter.DeleteFromCart(selectedVinylRecord);
+                MessageBox.Show("Товар удален из корзины!");
+                listBoxShoppingCart.Items.Clear();
+                var cart = presenter.GetCart();
+                foreach (var record in cart)
+                {
+                    listBoxShoppingCart.Items.Add(record);
+                }
+                labelTotal.Text = presenter.GetTotalCart().ToString() + " ₽";
+            }
+        }
+
+        private void btnPayCash_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnPayCard_Click(object sender, EventArgs e)
+        {
+            int amount = presenter.GetTotalCart();
+            CardPayment cardPayment = new CardPayment(card);
+            presenter.PayingCard(cardPayment, amount);
+            labelMoneyAmount.Text = presenter.GetBalanceFromCard(card).ToString();
+        }
+
+        private void bthPayBonuses_Click(object sender, EventArgs e)
+        {
+            string? text = textBoxInputBonuses.Text;
+            int amount;
+            BonusesPayment bonusesPayment = new BonusesPayment(account);
+            if (int.TryParse(text, out amount))
+            {
+                presenter.PayingBonuses(bonusesPayment, amount);
+            }
+            else
+            {
+                MessageBox.Show("Введите количество бонусов для списания.");
+            }
+            labelBonusesAmount.Text = presenter.GetBalanceFromAccount(account).ToString();
+            labelTotal.Text = presenter.GetTotalCart().ToString();
         }
     }
 }

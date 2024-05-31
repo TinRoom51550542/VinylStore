@@ -88,6 +88,7 @@
             btnPayCard.TabIndex = 4;
             btnPayCard.Text = "Дебетовой картой";
             btnPayCard.UseVisualStyleBackColor = true;
+            btnPayCard.Click += btnPayCard_Click;
             // 
             // label2
             // 

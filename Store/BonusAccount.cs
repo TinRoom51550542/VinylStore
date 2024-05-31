@@ -8,10 +8,14 @@ namespace Store
 {
     internal class BonusAccount
     {
-        private double amount;
-        public double GetBalance()
+        private int balance = 10000;
+        public int GetBalance()
         {
-            return amount;
+            return balance;
+        }
+        public void DeductFromBalance(int amount)
+        {
+            balance -= amount;
         }
     }
 }

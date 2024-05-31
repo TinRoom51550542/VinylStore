@@ -12,14 +12,14 @@ namespace Store
     internal class Database
     {
         public Presenter presenter;
-        public Dictionary<string, VinylRecord> Cart;
+        List<VinylRecord> Cart = new List<VinylRecord>();
         public Database(Presenter presenter)
         {
             this.presenter = presenter;
         }
-        Dictionary<string, VinylRecord> records = new Dictionary<string, VinylRecord>();
+        List<VinylRecord> records = new List<VinylRecord>();
 
-        public Dictionary<string, VinylRecord> GetRecords()
+        public List<VinylRecord> GetRecords()
         {
 
             var KiSHAA = new VinylRecord("Король и Шут", "Акустический альбом", 1998, 2023, "Панк", "Обложки/КИШАкустическийальбом.jpg", 5500);
@@ -35,30 +35,48 @@ namespace Store
             var rammramm = new VinylRecord("Rammstein", "Rammstein", 2019, 2019, "Рок", "Обложки/rammstein.jpg", 6000);
             var queennotw = new VinylRecord("Queen", "News Of The World", 1977, 1977, "Рок", "Обложки/queennewsoftheworld.jpg", 7500);
             var soadtoxicity = new VinylRecord("System Of A Down", "Toxicity", 2001, 2018, "Альтернативный Рок", "Обложки/soadtoxicity.jpg", 3500);
-            records.Add("Король и Шут - Акустический альбом", KiSHAA);
-            records.Add("Maneskin - Rush", ManeskinRush);
-            records.Add("Звери - Голод", ZveriGolod);
-            records.Add("Григорий Лепс - Полный вперед!", Leps);
-            records.Add("Кино - Это не любовь...", Kino);
-            records.Add("My Bloody Valentine - Loveless", MBVL);
-            records.Add("Kings Of Leon - WALLS", KOLW);
-            records.Add("Blur - The Great Escape", Blur);
-            records.Add("Oasis - (What's the Story) Morning Glory?", Oasis);
-            records.Add("Rammstein - Rosenrot", rammros);
-            records.Add("Rammstein - Rammstein", rammramm);
-            records.Add("Queen - News Of The World", queennotw);
-            records.Add("System Of A Down - Toxicity", soadtoxicity);
+            records.Add(KiSHAA);
+            records.Add(ManeskinRush);
+            records.Add(ZveriGolod);
+            records.Add(Leps);
+            records.Add(Kino);
+            records.Add(MBVL);
+            records.Add(KOLW);
+            records.Add(Blur);
+            records.Add(Oasis);
+            records.Add(rammros);
+            records.Add(rammramm);
+            records.Add(queennotw);
+            records.Add(soadtoxicity);
             return records;
         }
-        public Dictionary<string, VinylRecord> GetCart()
+        public List<VinylRecord> GetCart()
         {
             return Cart;
         }
-        public Dictionary<string, VinylRecord> AddToCart(VinylRecord selectedVinylRecord)
+        public void AddToCart(VinylRecord selectedVinylRecord, int amount)
         {
-            //Cart.Add(key, selectedVinylRecord);
-            //Cart.Add(records.Values.FirstOrDefault(record => record.Equals(selectedVinylRecord)));
-            return Cart;
+            for (int i = 0; i < amount; i++)
+            {
+                Cart.Add(selectedVinylRecord);
+            }
+        }
+        public void DeleteFromCart(VinylRecord selectedVinylRecord)
+        {
+            Cart.Remove(selectedVinylRecord);
+        }
+        public int TotalCart()
+        {
+            int summ = 0;
+            foreach (VinylRecord vr in Cart)
+            {
+                summ += vr.Price;
+            }
+            return summ;
+        }
+        public int RecalculateCart(int amount)
+        {
+            return TotalCart() - amount;
         }
     }
 }
